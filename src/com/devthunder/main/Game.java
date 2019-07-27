@@ -4,6 +4,7 @@ import com.devthunder.entities.Entity;
 import com.devthunder.entities.Player;
 import com.devthunder.graphics.Spritesheet;
 import com.devthunder.graphics.UI;
+import com.devthunder.world.TubeGenerator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +33,11 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
     public static final int SPRITE_SIZE = 16;
 
+    public static TubeGenerator tubeGenerator;
+
     public UI ui;
+
+    public static double score = 0;
 
     public Game() {
         addKeyListener(this);
@@ -44,11 +49,21 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
         // Initializing objects.
         spritesheet = new Spritesheet("/spritesheet.png");
-        player = new Player((WIDTH / 2) - 30, HEIGHT / 2, SPRITE_SIZE, SPRITE_SIZE, 1.7, spritesheet.getSprite(0, 0, SPRITE_SIZE, SPRITE_SIZE));
+        player = new Player((WIDTH / 2) - 30, HEIGHT / 2, SPRITE_SIZE, SPRITE_SIZE, spritesheet.getSprite(0, 0, SPRITE_SIZE, SPRITE_SIZE));
+        tubeGenerator = new TubeGenerator();
+
         ui = new UI();
         entities = new ArrayList<Entity>();
 
         entities.add(player);
+    }
+
+    public static void restartGame() {
+        score = 0;
+        player = new Player((WIDTH / 2) - 30, HEIGHT / 2, SPRITE_SIZE, SPRITE_SIZE, spritesheet.getSprite(0, 0, SPRITE_SIZE, SPRITE_SIZE));
+        entities.clear();
+        entities.add(player);
+        return;
     }
 
     public void initFrame() {
@@ -82,6 +97,8 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
     }
 
     public void tick() {
+        tubeGenerator.tick();
+
         for (int i = 0; i < entities.size(); i++) {
             Entity e = entities.get(i);
             e.tick();
@@ -150,12 +167,16 @@ public class Game extends Canvas implements Runnable, KeyListener, MouseListener
 
     @Override
     public void keyPressed(KeyEvent e) {
-
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            player.isPressed = true;
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-
+        if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+            player.isPressed = false;
+        }
     }
 
     @Override
